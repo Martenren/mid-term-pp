@@ -1,0 +1,3 @@
+/Users/marten/Desktop/unifi/parallel_programming/mid-term-pp/cmake-build-debug/CMakeFiles/mid_term_pp.dir
+/Users/marten/Desktop/unifi/parallel_programming/mid-term-pp/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/marten/Desktop/unifi/parallel_programming/mid-term-pp/cmake-build-debug/CMakeFiles/rebuild_cache.dir

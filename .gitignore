@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+.DS_Store
+.idea/
+
+/data/corpus_10000000.txt
+/data/corpus_25000000.txt
+/data/corpus_75000000.txt
+/data/corpus_50000000.txt
+/data/corpus_100000000.txt
