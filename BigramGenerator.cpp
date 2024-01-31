@@ -7,7 +7,7 @@
 
 class BigramGenerator {
 public:
-    BigramGenerator(const std::string& filename) {
+    BigramGenerator(const std::string &filename) {
         std::ifstream file(filename);
         std::string word;
         while (file >> word) {
@@ -15,8 +15,8 @@ public:
         }
     }
 
-    std::vector<std::pair<const char*, const char*>> generateBigrams() const {
-        std::vector<std::pair<const char*, const char*>> bigrams(corpus.size() - 1);
+    std::vector<std::pair<const char *, const char *>> generateBigrams() const {
+        std::vector<std::pair<const char *, const char *>> bigrams(corpus.size() - 1);
         for (size_t i = 0; i < corpus.size() - 1; ++i) {
             bigrams[i] = std::make_pair(&corpus[i][0], &corpus[i + 1][0]);
         }

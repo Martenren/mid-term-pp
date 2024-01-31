@@ -41,9 +41,12 @@ void generatePytonPlotPerCorpus(const std::vector<int>& num_words,
     }
     pythonScript << "]\n";
 
-    pythonScript << "plt.plot(num_words, sequential_times, marker='o', label='Sequential')\n"
+    pythonScript << "tick_locs = num_words\n"
+                    "tick_labels = [f'{val // 1000000}M' if val >= 1000000 else val for val in num_words]\n"
+                    "plt.xticks(tick_locs, tick_labels)\n"
+                    "plt.plot(num_words, sequential_times, marker='o', label='Sequential')\n"
                     "plt.plot(num_words, parallel_times, marker='o', label='Parallel')\n"
-                    "plt.xlabel('Number of Words')\n"
+                    "plt.xlabel('Number of words')\n"
                     "plt.ylabel('Time (seconds)')\n"
                     "plt.title('Parallel vs Sequential bigram generation')\n"
                     "plt.legend()\n"
@@ -87,7 +90,7 @@ void generatePytonPlotPerThreadNumber(const std::vector<int>& num_words,
     pythonScript << "color_map = colormaps['Set2']\n"
                     "plt.xticks(list(times.keys()))\n"
                     "plt.bar(list(times.keys()), list(times.values()), color=color_map.colors)\n"
-                    "plt.xlabel('Number of cores')\n"
+                    "plt.xlabel('Number of threads')\n"
                     "plt.ylabel('Time taken (s)')\n"
                     "plt.savefig('bar_plot.png')\n";
 
@@ -102,11 +105,6 @@ float parallelGenerateBigrams(const std::string& filename, const std::string& nu
 
     // Generate bigrams in parallel
     auto result = bigramGenerator.generateBigramsParallel(numThreads);
-
-    //print first 10 bigrams
-    /*for (int i = 0; i < 10; i++) {
-        std::cout << result[i].first << " " << result[i].second << std::endl;
-    }*/
 
     // Stop the timer
     auto end = std::chrono::steady_clock::now();
@@ -125,11 +123,6 @@ float generateBigrams(const std::string& filename, const std::string& numberOfWo
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-    //print first 10 bigrams
-    /*for (int i = 0; i < 10; i++) {
-        std::cout << bigrams[i].first << " " << bigrams[i].second << std::endl;
-    }*/
-
     std::cout << "Time taken to generate bigrams for "<< numberOfWords <<" words: "
               << duration.count() << " milliseconds" << "---->" << duration.count()/1000.0 << "seconds" << std::endl;
     return duration.count()/1000.0;
@@ -141,7 +134,7 @@ int main() {
     std::vector<double> parallel_times_corpus = {};
     std::vector<double> parallel_times_threads = {};
 
-    /*sequential_times.push_back(generateBigrams("data/corpus_10000.txt", "10000"));
+    sequential_times.push_back(generateBigrams("data/corpus_10000.txt", "10000"));
     sequential_times.push_back(generateBigrams("data/corpus_100000.txt", "100000"));
     sequential_times.push_back(generateBigrams("data/corpus_1000000.txt", "1000000"));
     sequential_times.push_back(generateBigrams("data/corpus_5000000.txt", "5000000"));
@@ -159,18 +152,19 @@ int main() {
     parallel_times_corpus.push_back(parallelGenerateBigrams("data/corpus_25000000.txt", "25000000", 8));
     parallel_times_corpus.push_back(parallelGenerateBigrams("data/corpus_50000000.txt", "50000000", 8));
     parallel_times_corpus.push_back(parallelGenerateBigrams("data/corpus_75000000.txt", "75000000", 8));
-    parallel_times_corpus.push_back(parallelGenerateBigrams("data/corpus_100000000.txt", "100000000", 8));*/
+    parallel_times_corpus.push_back(parallelGenerateBigrams("data/corpus_100000000.txt", "100000000", 8));
 
     for(int num_threads=1; num_threads< 12+1; num_threads++){
+        std::cout << "Number of threads: " << num_threads << ": ";
         parallel_times_threads.push_back(parallelGenerateBigrams("data/corpus_100000000.txt", "100000000", num_threads));
     }
 
     std::vector<int> num_words = {10000, 100000, 1000000, 5000000, 10000000, 25000000, 50000000, 75000000, 100000000};
 
-    //generatePytonPlotPerCorpus(num_words, sequential_times, parallel_times_corpus);
+    generatePytonPlotPerCorpus(num_words, sequential_times, parallel_times_corpus);
     generatePytonPlotPerThreadNumber(num_words, parallel_times_threads);
 
-    // system("python plot_script.py");
+    system("python plot_script.py");
     system("python plot_script_2.py");
 
     return 0;
